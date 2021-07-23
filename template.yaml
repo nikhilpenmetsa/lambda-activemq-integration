@@ -15,9 +15,9 @@ Parameters:
     Type: String
     #Default: arn:aws:mq:us-west-2:986112483391:broker:Broker:b-a7489285-df24-4dc8-b304-f4a2444fdec9
     Default: arn:aws:mq:us-west-2:123456789:broker:Broker:b-222222-1111-1111-1111-111111111112
-  mqdemoPassword:
-    Type: String
-    Default: notAGoodPassword
+  # mqdemoPassword:
+  #   Type: String
+  #   Default: notAGoodPassword
 
 Resources:
   MQQueueAccessSecret:
