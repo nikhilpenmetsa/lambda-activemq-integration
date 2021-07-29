@@ -13,19 +13,12 @@ Globals:
 Parameters:
   brokerARNParameter:
     Type: String
-    #Default: arn:aws:mq:us-west-2:986112483391:broker:Broker:b-a7489285-df24-4dc8-b304-f4a2444fdec9
     Default: arn:aws:mq:us-west-2:123456789:broker:Broker:b-222222-1111-1111-1111-111111111112
-  # mqdemoPassword:
-  #   Type: String
-  #   Default: notAGoodPassword
+  secretARNParameter:
+    Type: String
+    Default: arn:aws:secretsmanager:us-west-2:123456789:secret:MQaccess-jRLYpW
 
 Resources:
-  MQQueueAccessSecret:
-    Type: 'AWS::SecretsManager::Secret'
-    Properties:
-      Name: SecretForMQQueueAccess
-      Description: "Secret for accessing a queue on the ActiveMQ broker."
-      SecretString: '{"username":"workshopUser","password":"workshopUser"}'
 
   MQSubscriberFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -59,16 +52,12 @@ Resources:
               - "samQueue"
             SourceAccessConfigurations:
               - Type: BASIC_AUTH
-                URI: !Ref MQQueueAccessSecret
+                URI: !Ref secretARNParameter
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   MQSubscriberFunction:
     Description: "MQ Subscriber Lambda Function ARN"
     Value: !GetAtt MQSubscriberFunction.Arn
   MQSubscriberFunctionIamRole:
     Description: "Implicit IAM Role created for MQSubscriber function"
     Value: !GetAtt MQSubscriberFunctionRole.Arn
-

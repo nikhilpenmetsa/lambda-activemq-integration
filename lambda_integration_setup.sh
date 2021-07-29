@@ -15,12 +15,16 @@ aws s3 mb s3://$s3_deploy_bucket
 echo "Getting broker ARN..."
 brokerArn=`aws mq list-brokers | jq '.BrokerSummaries[] | select(.BrokerName=="Broker") | {id:.BrokerArn}' | grep "id" | cut -d '"' -f4`
 echo $brokerArn
+
+#todo update secretName
+echo "Getting secret ARN..."
+secretArn=`aws secretsmanager list-secrets --filters Key=name,Values=MQaccess | jq '.SecretList[] | {ARN}' | grep 'ARN' | cut -d '"' -f4`
+echo $secretArn
+
 echo "Building serverless reciever application..."
 sam build
-echo "Packaging serverless reciever application..."
-sam package --output-template-file packaged.yaml --s3-bucket $s3_deploy_bucket
 echo "Deploying serverless reciever application..."
 #todo add region logic--region us-west-2
-sam deploy --template-file packaged.yaml --stack-name sam-lambda-mq-integration-app-stack --capabilities CAPABILITY_IAM  --parameter-overrides brokerARNParameter=$brokerArn --no-confirm-changeset
+sam deploy --template-file packaged.yaml --stack-name sam-lambda-mq-integration-app-stack --capabilities CAPABILITY_IAM  --parameter-overrides brokerARNParameter=$brokerArn secretARNParameter=$secretArn --no-confirm-changeset
 #todo..catch and print failure based on return code.
 echo "Successfully deployed serverless reciever application..."
