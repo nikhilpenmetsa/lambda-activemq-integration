@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   sam-lambda-mq-integration-app
-
   Sample SAM Template for sam-lambda-mq-integration-app
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -19,11 +18,10 @@ Parameters:
     Default: arn:aws:secretsmanager:us-west-2:123456789:secret:MQaccess-jRLYpW
 
 Resources:
-
-  MQSubscriberFunction:
+  MQReceiverFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      FunctionName: MQSubscriberFunction
+      FunctionName: MQReceiverFunction
       CodeUri: src/
       Handler: app.lambda_handler
       Runtime: python3.6
@@ -49,15 +47,15 @@ Resources:
           Properties:
             Broker: !Ref brokerARNParameter
             Queues:
-              - "samQueue"
+              - "workshop.queueC"
             SourceAccessConfigurations:
               - Type: BASIC_AUTH
                 URI: !Ref secretARNParameter
 
 Outputs:
-  MQSubscriberFunction:
-    Description: "MQ Subscriber Lambda Function ARN"
-    Value: !GetAtt MQSubscriberFunction.Arn
-  MQSubscriberFunctionIamRole:
-    Description: "Implicit IAM Role created for MQSubscriber function"
-    Value: !GetAtt MQSubscriberFunctionRole.Arn
+  MQReceiverFunction:
+    Description: "MQ Receiver Function ARN"
+    Value: !GetAtt MQReceiverFunction.Arn
+  MQReceiverFunctionIamRole:
+    Description: "Implicit IAM Role created for MQ Receiver function"
+    Value: !GetAtt MQReceiverFunctionRole.Arn
